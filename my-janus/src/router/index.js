@@ -1,3 +1,5 @@
+// router/index.js
+
 import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '../views/Home.vue';
 import Login from '../views/Login.vue';
@@ -34,9 +36,15 @@ router.beforeEach(async (to, from, next) => {
           token: token,
           role: response.data.role,
           userId: response.data.user_id, // Add the user ID to the user data
+          firstTime: response.data.first_time, // Add the firstTime value to the user data
         });
 
-        next();
+        // Check if firstTime is true, the user role is 'user', and the current route is not '/user'
+        if (response.data.first_time && response.data.role === 'user' && to.path !== '/User') {
+          next('/User'); // Redirect to the /user route
+        } else {
+          next();
+        }
       } else {
         next('/login');
       }

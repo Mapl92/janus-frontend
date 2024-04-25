@@ -56,15 +56,18 @@
               </div>
             </div>
             <div>
-              <label for="data_sharing" class="block text-sm font-medium text-gray-700">Datenweitergabe</label>
-              <div class="mt-1">
-                <select id="data_sharing" v-model="user.data_sharing" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                  <option value="agree">Ich stimme zu, dass meine Daten mit den anderen Mitgliedern der Janus IG geteilt werden</option>
-                  <option value="disagree">Ich stimme nicht zu, dass meine Daten mit den anderen Mitgliedern der Janus IG geteilt werden</option>
-                </select>
+              <label class="block text-sm font-medium text-gray-700">Datenweitergabe</label>
+              <div class="mt-2 space-y-4">
+                <div class="flex items-center">
+                  <input id="agree" v-model="user.data_sharing" type="radio" value="agree" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                  <label for="agree" class="ml-3 block text-sm font-medium text-gray-700">Ich stimme zu, dass meine Daten mit den anderen Mitgliedern der Janus IG geteilt werden</label>
+                </div>
+                <div class="flex items-center">
+                  <input id="disagree" v-model="user.data_sharing" type="radio" value="disagree" class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300">
+                  <label for="disagree" class="ml-3 block text-sm font-medium text-gray-700">Ich stimme nicht zu, dass meine Daten mit den anderen Mitgliedern der Janus IG geteilt werden</label>
+                </div>
               </div>
-            </div>
-            <div>
+
               <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                 Speichern
               </button>
@@ -95,7 +98,7 @@
           city: '',
           email: '',
           phone: '',
-          data_sharing: 'disagree',
+          data_sharing: 'agree',
         },
       };
     },
@@ -135,45 +138,48 @@
         }
       },
       async updateUser() {
-        if (!this.token) {
-          console.error("User is not authenticated.");
-          return;
-        }
-  
-        try {
-          // Update user data
-          await axios.put(`https://api.zuendapp-janus-ig.de/edit_own_address/${this.userId}`, {
-            First_Name: this.user.first_name,
-            Last_Name: this.user.last_name,
-            DOB: this.user.dob,
-            Street: this.user.street,
-            Zip: this.user.zip,
-            City: this.user.city,
-            'E-Mail': this.user.email,
-            Phone: this.user.phone,
-          }, {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-          });
-  
-          // Update user active status based on data sharing agreement
-          await axios.put(`https://api.zuendapp-janus-ig.de/change_own_active_status/${this.userId}`, null, {
-            headers: {
-              Authorization: `Bearer ${this.token}`,
-            },
-            params: {
-              is_active: this.user.data_sharing === 'agree',
-            },
-          });
-  
-          console.log("User data and active status updated successfully");
-          // You can show a success message to the user here
-        } catch (error) {
-          console.error("Error updating user data or active status:", error);
-          // You can show an error message to the user here
-        }
+  if (!this.token) {
+    console.error("User is not authenticated.");
+    return;
+  }
+
+  try {
+    // Update user data
+    await axios.put(`https://api.zuendapp-janus-ig.de/edit_own_address/${this.userId}`, {
+      First_Name: this.user.first_name,
+      Last_Name: this.user.last_name,
+      DOB: this.user.dob,
+      Street: this.user.street,
+      Zip: this.user.zip,
+      City: this.user.city,
+      'E-Mail': this.user.email,
+      Phone: this.user.phone,
+    }, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
       },
+    });
+
+    // Update user active status based on data sharing agreement
+    await axios.put(`https://api.zuendapp-janus-ig.de/change_own_active_status/${this.userId}`, {
+      is_active: this.user.data_sharing === 'agree'
+    }, {
+      headers: {
+        Authorization: `Bearer ${this.token}`,
+        'Content-Type': 'application/json'
+      },
+    });
+
+    console.log("User data and active status updated successfully");
+    // You can show a success message to the user here
+  } catch (error) {
+    console.error("Error updating user data or active status:", error);
+    // You can show an error message to the user here
+  }
+  // push to home
+  this.$router.push('/');
+},
+
       formatDate(dateString) {
         if (!dateString) return '';
         const dateParts = dateString.split('.');

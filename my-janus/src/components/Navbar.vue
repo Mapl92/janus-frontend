@@ -8,8 +8,9 @@
           </div>
           <div class="hidden md:block">
             <div class="ml-10 flex items-baseline space-x-4">
-              <router-link to="/" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700" :class="{ 'active': isCurrentRoute('/') }">Dokumente</router-link>
+              <router-link to="/" class="px-3 py-2 rounded-md text-sm font-medium text-white bg-gray-900 focus:outline-none focus:text-white focus:bg-gray-700" :class="{ 'active': isCurrentRoute('/') }">Mitglieder</router-link>
               <router-link v-if="isAdmin" to="/nutzer" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" :class="{ 'active': isCurrentRoute('/nutzer') }">Nutzerverwaltung</router-link>
+              <router-link v-if="isUser" to="/User" class="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 focus:outline-none focus:text-white focus:bg-gray-700" :class="{ 'active': isCurrentRoute('/meine-daten') }">Meine Daten</router-link>
             </div>
           </div>
         </div>
